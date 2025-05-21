@@ -9,7 +9,13 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        checkout scm
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: '*/master']],
+          userRemoteConfigs: [[
+            url: 'https://github.com/salma123778/student-abs.git'
+          ]]
+        ])
       }
     }
 
@@ -75,6 +81,4 @@ pipeline {
       }
     }
   }
-
-  
 }
