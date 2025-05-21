@@ -14,7 +14,8 @@ pipeline {
           branches: [[name: '*/master']],
           userRemoteConfigs: [[
             url: 'https://github.com/salma123778/student-abs.git'
-          ]]
+          ]],
+          extensions: [[$class: 'CleanBeforeCheckout']]
         ])
       }
     }
