@@ -9,15 +9,8 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        checkout([
-          $class: 'GitSCM',
-          branches: [[name: '*/master']],
-          userRemoteConfigs: [[
-            url: 'https://github.com/salma123778/student-abs.git'
-          ]],
-          extensions: [[$class: 'CleanBeforeCheckout']]
-        ])
-      }
+      git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
+    }
     }
 
     stage('Install Backend Dependencies') {
