@@ -1,22 +1,77 @@
 pipeline {
   agent any
 
+  environment {
+    DOCKER_IMAGE_BACKEND = "student-absence-backend"
+    DOCKER_IMAGE_FRONTEND = "student-absence-frontend"
+  }
+
   stages {
-    stage('Nettoyage du workspace') {
+    stage('Checkout') {
       steps {
-        deleteDir()
+      git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
+    }
+    }
+
+    stage('Install Backend Dependencies') {
+      steps {
+        dir('backend') {
+          sh 'npm install'
+        }
       }
     }
 
-    stage('Vérification de Git') {
+    stage('Run Backend Tests') {
       steps {
-        sh 'git --version'
+        dir('backend') {
+          sh 'npm test'
+        }
       }
     }
 
-    stage('Récupération du code') {
+    stage('Install Frontend Dependencies') {
       steps {
-        git url: 'https://github.com/salma123778/student-abs.git', branch: 'master'
+        dir('frontend') {
+          sh 'npm install'
+        }
+      }
+    }
+
+    stage('Run Frontend Tests') {
+      steps {
+        dir('frontend') {
+          sh 'npm test'
+        }
+      }
+    }
+
+    stage('Build Backend Docker Image') {
+      steps {
+        dir('backend') {
+          sh "docker build -t $DOCKER_IMAGE_BACKEND ."
+        }
+      }
+    }
+
+    stage('Build Frontend Docker Image') {
+      steps {
+        dir('frontend') {
+          sh "docker build -t $DOCKER_IMAGE_FRONTEND ."
+        }
+      }
+    }
+
+    stage('Push Images') {
+      steps {
+        echo "Push vers registry si configuré"
+        // ex: sh "docker push $DOCKER_IMAGE_BACKEND"
+        // ex: sh "docker push $DOCKER_IMAGE_FRONTEND"
+      }
+    }
+
+    stage('Deploy with Ansible') {
+      steps {
+        sh 'ansible-playbook ansible/playbook.yml'
       }
     }
   }
