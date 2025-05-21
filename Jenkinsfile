@@ -76,12 +76,5 @@ pipeline {
     }
   }
 
-  post {
-    success {
-      echo 'Build et tests réussis, pipeline terminé.'
-    }
-    failure {
-      echo 'Erreur dans le pipeline, build ou tests échoués.'
-    }
-  }
+  
 }
