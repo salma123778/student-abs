@@ -1,0 +1,3 @@
+[submodule "frontend"]
+    path = frontend
+    url = https://github.com/salma123778/student-abs.git
