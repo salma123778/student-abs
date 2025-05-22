@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_IMAGE_BACKEND = "student-absence-backend"
-    DOCKER_IMAGE_FRONTEND = "student-absence-frontend"
+    DOCKER_IMAGE_BACKEND = "salma123778/student-absence-backend"
+    DOCKER_IMAGE_FRONTEND = "salma123778/student-absence-frontend"
   }
 
   stages {
@@ -11,7 +11,6 @@ pipeline {
       steps {
         git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
         sh 'ls -l'
-        
       }
     }
 
@@ -61,10 +60,17 @@ pipeline {
 
     stage('Push Images') {
       steps {
-        echo "Push vers registry si configuré"
-        // Exemples :
-        // sh "docker tag $DOCKER_IMAGE_BACKEND your-registry/$DOCKER_IMAGE_BACKEND"
-        // sh "docker push your-registry/$DOCKER_IMAGE_BACKEND"
+        withCredentials([usernamePassword(
+          credentialsId: 'docker-hub-creds',
+          usernameVariable: 'DOCKER_USERNAME',
+          passwordVariable: 'DOCKER_PASSWORD'
+        )]) {
+          sh '''
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push $DOCKER_IMAGE_BACKEND
+            docker push $DOCKER_IMAGE_FRONTEND
+          '''
+        }
       }
     }
 
