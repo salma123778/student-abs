@@ -17,7 +17,7 @@ pipeline {
       agent {
         docker {
           image 'node:18-alpine'
-          args '-v /var/jenkins_home:/var/jenkins_home'  // optionnel, volume Jenkins
+          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
         }
       }
       steps {
@@ -31,6 +31,7 @@ pipeline {
       agent {
         docker {
           image 'node:18-alpine'
+          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
         }
       }
       steps {
@@ -39,8 +40,6 @@ pipeline {
         }
       }
     }
-
-    // Idem pour frontend (npm install, npm test) : utiliser agent docker node:18-alpine
 
     stage('Build Backend Docker Image') {
       steps {
