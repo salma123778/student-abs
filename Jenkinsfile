@@ -10,7 +10,7 @@ pipeline {
     stage('Checkout') {
       steps {
         git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
-        // Mise à jour des sous-modules
+        sh 'ls -l'
         
       }
     }
