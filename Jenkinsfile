@@ -7,14 +7,15 @@ pipeline {
   }
 
   stages {
-    stage('Checkout') {
+
+    stage('📥 Cloner le dépôt GitHub') {
       steps {
         git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
         sh 'ls -l'
       }
     }
 
-    stage('Install Backend Dependencies') {
+    stage('📦 Installer les dépendances Backend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -28,7 +29,7 @@ pipeline {
       }
     }
 
-    stage('Run Backend Tests') {
+    stage('✅ Lancer les tests Backend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -42,7 +43,7 @@ pipeline {
       }
     }
 
-    stage('Build Backend Docker Image') {
+    stage('🐳 Construction de l’image Docker Backend') {
       steps {
         dir('backend') {
           sh "docker build -t $DOCKER_IMAGE_BACKEND ."
@@ -50,7 +51,7 @@ pipeline {
       }
     }
 
-    stage('Build Frontend Docker Image') {
+    stage('🐳 Construction de l’image Docker Frontend') {
       steps {
         dir('frontend') {
           sh "docker build -t $DOCKER_IMAGE_FRONTEND -f Dockerfile ."
@@ -58,7 +59,7 @@ pipeline {
       }
     }
 
-    stage('Push Images') {
+    stage('🚀 Pousser les images vers Docker Hub') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'git-docker',
@@ -74,7 +75,7 @@ pipeline {
       }
     }
 
-    stage('Deploy with Ansible') {
+    stage('🛠 Déploiement avec Ansible') {
       steps {
         sh 'ansible-playbook ansible/playbook.yml'
       }
