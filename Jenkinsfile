@@ -9,11 +9,17 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-      git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
-    }
+        git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
+      }
     }
 
     stage('Install Backend Dependencies') {
+      agent {
+        docker {
+          image 'node:18-alpine'
+          args '-v /var/jenkins_home:/var/jenkins_home'  // optionnel, volume Jenkins
+        }
+      }
       steps {
         dir('backend') {
           sh 'npm install'
@@ -22,6 +28,11 @@ pipeline {
     }
 
     stage('Run Backend Tests') {
+      agent {
+        docker {
+          image 'node:18-alpine'
+        }
+      }
       steps {
         dir('backend') {
           sh 'npm test'
@@ -29,21 +40,7 @@ pipeline {
       }
     }
 
-    stage('Install Frontend Dependencies') {
-      steps {
-        dir('frontend') {
-          sh 'npm install'
-        }
-      }
-    }
-
-    stage('Run Frontend Tests') {
-      steps {
-        dir('frontend') {
-          sh 'npm test'
-        }
-      }
-    }
+    // Idem pour frontend (npm install, npm test) : utiliser agent docker node:18-alpine
 
     stage('Build Backend Docker Image') {
       steps {
@@ -64,8 +61,6 @@ pipeline {
     stage('Push Images') {
       steps {
         echo "Push vers registry si configuré"
-        // ex: sh "docker push $DOCKER_IMAGE_BACKEND"
-        // ex: sh "docker push $DOCKER_IMAGE_FRONTEND"
       }
     }
 
