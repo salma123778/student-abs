@@ -54,7 +54,7 @@ pipeline {
     stage('Build Frontend Docker Image') {
       steps {
         dir('frontend') {
-          sh "docker build -t $DOCKER_IMAGE_FRONTEND -f frontend/Dockerfile frontend"
+          sh "docker build -t $DOCKER_IMAGE_FRONTEND -f Dockerfile ."
         }
       }
     }
