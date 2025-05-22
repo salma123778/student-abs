@@ -61,7 +61,7 @@ pipeline {
     stage('Push Images') {
       steps {
         withCredentials([usernamePassword(
-          credentialsId: 'test',
+          credentialsId: 'git-docker',
           usernameVariable: 'DOCKER_USERNAME',
           passwordVariable: 'DOCKER_PASSWORD'
         )]) {
