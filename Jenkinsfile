@@ -52,7 +52,7 @@ pipeline {
     stage('Build Frontend Docker Image') {
       steps {
         dir('frontend') {
-          sh "docker build -t $DOCKER_IMAGE_FRONTEND ."
+          sh "docker build -t $DOCKER_IMAGE_FRONTEND -f Dockerfile ."
         }
       }
     }
@@ -60,6 +60,9 @@ pipeline {
     stage('Push Images') {
       steps {
         echo "Push vers registry si configuré"
+        // Exemples :
+        // sh "docker tag $DOCKER_IMAGE_BACKEND your-registry/$DOCKER_IMAGE_BACKEND"
+        // sh "docker push your-registry/$DOCKER_IMAGE_BACKEND"
       }
     }
 
