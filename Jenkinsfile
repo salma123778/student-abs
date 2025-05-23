@@ -15,8 +15,8 @@ pipeline {
       }
     }
 
-    // BACKEND
-    stage('📦 dépendances Backend') {
+    // Backend dependencies & tests
+    stage('📦 Installer dépendances Backend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -30,7 +30,7 @@ pipeline {
       }
     }
 
-    stage('✅ tests Backend') {
+    stage('✅ Lancer tests Backend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -44,8 +44,8 @@ pipeline {
       }
     }
 
-    // FRONTEND
-    stage('📦 dépendances Frontend') {
+    // Frontend dependencies & tests
+    stage('📦 Installer dépendances Frontend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -59,7 +59,7 @@ pipeline {
       }
     }
 
-    stage('✅ tests Frontend') {
+    stage('✅ Lancer tests Frontend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -73,25 +73,16 @@ pipeline {
       }
     }
 
-    // BUILD IMAGES
-    stage('🐳 image Docker Backend') {
+    // Build images with docker-compose
+    stage('🐳 Construire images avec docker-compose') {
       steps {
-        dir('backend') {
-          sh "docker build -t $DOCKER_IMAGE_BACKEND ."
-        }
+        // Assure-toi que docker-compose.yml est à la racine ou indique le chemin
+        sh 'docker-compose build'
       }
     }
 
-    stage('🐳 image Docker Frontend') {
-      steps {
-        dir('frontend') {
-          sh "docker build -t $DOCKER_IMAGE_FRONTEND -f Dockerfile ."
-        }
-      }
-    }
-
-    // PUSH IMAGES
-    stage('🚀 Push -> Docker Hub') {
+    // Push images vers Docker Hub
+    stage('🚀 Pousser images Docker Hub') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'git-docker',
@@ -100,15 +91,14 @@ pipeline {
         )]) {
           sh '''
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push $DOCKER_IMAGE_BACKEND
-            docker push $DOCKER_IMAGE_FRONTEND
+            docker-compose push
           '''
         }
       }
     }
 
-    // DEPLOY
-    stage('🛠 Déploiement avec Ansible') {
+    // Deployment avec Ansible
+    stage('🛠 Déployer avec Ansible') {
       steps {
         sh 'ansible-playbook ansible/playbook.yml'
       }
