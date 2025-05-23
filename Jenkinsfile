@@ -15,6 +15,7 @@ pipeline {
       }
     }
 
+    // BACKEND
     stage('📦 Installer les dépendances Backend') {
       agent {
         docker {
@@ -43,6 +44,36 @@ pipeline {
       }
     }
 
+    // FRONTEND
+    stage('📦 Installer les dépendances Frontend') {
+      agent {
+        docker {
+          image 'node:18-alpine'
+          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
+        }
+      }
+      steps {
+        dir('frontend') {
+          sh 'npm install'
+        }
+      }
+    }
+
+    stage('✅ Lancer les tests Frontend') {
+      agent {
+        docker {
+          image 'node:18-alpine'
+          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
+        }
+      }
+      steps {
+        dir('frontend') {
+          sh 'npm test'
+        }
+      }
+    }
+
+    // BUILD IMAGES
     stage('🐳 Construction de l’image Docker Backend') {
       steps {
         dir('backend') {
@@ -59,6 +90,7 @@ pipeline {
       }
     }
 
+    // PUSH IMAGES
     stage('🚀 Pousser les images vers Docker Hub') {
       steps {
         withCredentials([usernamePassword(
@@ -75,6 +107,7 @@ pipeline {
       }
     }
 
+    // DEPLOY
     stage('🛠 Déploiement avec Ansible') {
       steps {
         sh 'ansible-playbook ansible/playbook.yml'
