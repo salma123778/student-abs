@@ -77,7 +77,7 @@ pipeline {
     stage('🐳 Construire images avec docker-compose') {
       steps {
         // Assure-toi que docker-compose.yml est à la racine ou indique le chemin
-        sh 'docker compose build'
+        sh 'docker-compose -f docker-compose.yml build'
       }
     }
 
