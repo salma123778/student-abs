@@ -15,7 +15,7 @@ pipeline {
       }
     }
 
-    stage('📦 Installer dépendances Backend & Frontend') {
+    stage('📦 dépendances') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -32,7 +32,7 @@ pipeline {
       }
     }
 
-    stage('✅ Lancer tests Backend & Frontend') {
+    stage('✅ tests') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -49,14 +49,14 @@ pipeline {
       }
     }
 
-    stage('🐳 Construire images avec docker-compose') {
+    stage('🐳 Docker Compose') {
       steps {
         // Vérifie que docker-compose.yml est à la racine du workspace
         sh 'docker-compose -f docker-compose.yml build'
       }
     }
 
-    stage('🚀 Pousser images Docker Hub') {
+    stage('🚀 Push Docker Hub') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'git-docker',
