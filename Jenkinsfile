@@ -15,74 +15,41 @@ pipeline {
       }
     }
 
-    // Backend dependencies & tests
-    stage('📦 Installer dépendances Backend') {
-      agent {
-        docker {
-          image 'node:18-alpine'
-          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
-        }
-      }
+    stage('📦 dépendances') {
       steps {
-        dir('backend') {
-          sh 'npm install'
+        script {
+          def services = ['backend', 'frontend']
+          services.each { service ->
+            echo "Installation des dépendances pour ${service}"
+            docker.image('node:18-alpine').inside("-v ${env.WORKSPACE}:${env.WORKSPACE} -w ${env.WORKSPACE}/${service}") {
+              sh 'npm install'
+            }
+          }
         }
       }
     }
 
-    stage('✅ Lancer tests Backend') {
-      agent {
-        docker {
-          image 'node:18-alpine'
-          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
-        }
-      }
+    stage('✅ tests') {
       steps {
-        dir('backend') {
-          sh 'npm test'
+        script {
+          def services = ['backend', 'frontend']
+          services.each { service ->
+            echo "Lancement des tests pour ${service}"
+            docker.image('node:18-alpine').inside("-v ${env.WORKSPACE}:${env.WORKSPACE} -w ${env.WORKSPACE}/${service}") {
+              sh 'npm test'
+            }
+          }
         }
       }
     }
 
-    // Frontend dependencies & tests
-    stage('📦 Installer dépendances Frontend') {
-      agent {
-        docker {
-          image 'node:18-alpine'
-          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
-        }
-      }
+    stage('🐳 Docker-compose') {
       steps {
-        dir('frontend') {
-          sh 'npm install'
-        }
-      }
-    }
-
-    stage('✅ Lancer tests Frontend') {
-      agent {
-        docker {
-          image 'node:18-alpine'
-          args "-v $WORKSPACE:$WORKSPACE -w $WORKSPACE"
-        }
-      }
-      steps {
-        dir('frontend') {
-          sh 'npm test'
-        }
-      }
-    }
-
-    // Build images with docker-compose
-    stage('🐳 Construire images avec docker-compose') {
-      steps {
-        // Assure-toi que docker-compose.yml est à la racine ou indique le chemin
         sh 'docker-compose -f docker-compose.yml build'
       }
     }
 
-    // Push images vers Docker Hub
-    stage('🚀 Pousser images Docker Hub') {
+    stage('🚀 Docker Hub') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'git-docker',
@@ -97,7 +64,6 @@ pipeline {
       }
     }
 
-    // Deployment avec Ansible
     stage('🛠 Déployer avec Ansible') {
       steps {
         sh 'ansible-playbook ansible/playbook.yml'
