@@ -14,9 +14,9 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: student-absence-frontend:latest
+          image: salma123778/student-absence-frontend:latest
           ports:
-            - containerPort: 19000
+            - containerPort: 8081
 ---
 apiVersion: v1
 kind: Service

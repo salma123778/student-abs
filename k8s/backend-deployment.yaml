@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: student-absence-backend:latest
+          image: salma123778/student-absence-backend:latest
           ports:
             - containerPort: 3000
 ---

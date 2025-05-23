@@ -1,0 +1,13 @@
+---
+- name: Déployer application
+  hosts: all
+  become: yes
+  tasks:
+    - name: Copier fichiers de l’application
+      copy:
+        src: /path/local/app/
+        dest: /var/www/app/
+    - name: Redémarrer service
+      systemd:
+        name: apache2
+        state: restarted
