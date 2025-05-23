@@ -8,7 +8,7 @@ pipeline {
 
   stages {
 
-    stage('📥 Cloner le dépôt GitHub') {
+    stage('📥 Cloner le dépôt') {
       steps {
         git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
         sh 'ls -l'
@@ -16,7 +16,7 @@ pipeline {
     }
 
     // BACKEND
-    stage('📦 Installer les dépendances Backend') {
+    stage('📦 dépendances Backend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -30,7 +30,7 @@ pipeline {
       }
     }
 
-    stage('✅ Lancer les tests Backend') {
+    stage('✅ tests Backend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -45,7 +45,7 @@ pipeline {
     }
 
     // FRONTEND
-    stage('📦 Installer les dépendances Frontend') {
+    stage('📦 dépendances Frontend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -59,7 +59,7 @@ pipeline {
       }
     }
 
-    stage('✅ Lancer les tests Frontend') {
+    stage('✅ tests Frontend') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -74,7 +74,7 @@ pipeline {
     }
 
     // BUILD IMAGES
-    stage('🐳 Construction de l’image Docker Backend') {
+    stage('🐳 image Docker Backend') {
       steps {
         dir('backend') {
           sh "docker build -t $DOCKER_IMAGE_BACKEND ."
@@ -82,7 +82,7 @@ pipeline {
       }
     }
 
-    stage('🐳 Construction de l’image Docker Frontend') {
+    stage('🐳 image Docker Frontend') {
       steps {
         dir('frontend') {
           sh "docker build -t $DOCKER_IMAGE_FRONTEND -f Dockerfile ."
@@ -91,7 +91,7 @@ pipeline {
     }
 
     // PUSH IMAGES
-    stage('🚀 Pousser les images vers Docker Hub') {
+    stage('🚀 Push -> Docker Hub') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'git-docker',
