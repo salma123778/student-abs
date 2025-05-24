@@ -8,14 +8,14 @@ pipeline {
 
   stages {
 
-    stage('📥 Cloner le dépôt') {
+    stage('📥 Clone') {
       steps {
         git branch: 'master', url: 'https://github.com/salma123778/student-abs.git'
         sh 'ls -l'
       }
     }
 
-    stage('📦 dépendances') {
+    stage('📦 Dependencies') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -32,7 +32,7 @@ pipeline {
       }
     }
 
-    stage('✅ tests') {
+    stage('✅ Run Tests') {
       agent {
         docker {
           image 'node:18-alpine'
@@ -71,7 +71,7 @@ pipeline {
       }
     }
 
-    stage('🛠 Déployer avec Ansible') {
+    stage('Deploy with Ansible') {
       steps {
         sh 'ansible-playbook ansible/playbook.yml'
       }
