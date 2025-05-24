@@ -1,13 +1,8 @@
 ---
-- name: Déployer application
-  hosts: all
-  become: yes
+- name: Déployer l'application Student Absence sur Kubernetes
+  hosts: localhost
+  become: false
   tasks:
-    - name: Copier fichiers de l’application
-      copy:
-        src: /path/local/app/
-        dest: /var/www/app/
-    - name: Redémarrer service
-      systemd:
-        name: apache2
-        state: restarted
+
+    - name: Appliquer les manifests Kubernetes
+      shell: kubectl apply -f /var/jenkins_home/workspace/test/k8s/
